@@ -1,4 +1,11 @@
-import { Alert, FlatList, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  FlatList,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TextComponent from "../components/TextComponent";
@@ -11,6 +18,7 @@ import GuessLogs from "../components/GuessLogs";
 const Game = ({ number, handlerChangeGameOverVariable }) => {
   let minGuess = 1;
   let maxGuess = 100;
+  const { height, width } = useWindowDimensions();
 
   const generateGuessNumberRandom = (min, max, exclude) => {
     const randomNumber = Math.floor(Math.random() * (max - min)) + min;
@@ -68,9 +76,8 @@ const Game = ({ number, handlerChangeGameOverVariable }) => {
     maxGuess = 100;
   }, []);
 
-  return (
-    <View style={styles.rootScreen}>
-      <TextComponent>Opening Guess</TextComponent>
+  let content = (
+    <>
       <View style={styles.guessNumberView}>
         <TextComponent style={styles.guessNumber}>{guessNumber}</TextComponent>
       </View>
@@ -85,6 +92,31 @@ const Game = ({ number, handlerChangeGameOverVariable }) => {
           </PrimaryButton>
         </View>
       </Card>
+    </>
+  );
+
+  if (width > 500) {
+    content = (
+      <>
+        <View style={[styles.buttonView, { justifyContent: "center" }]}>
+          <PrimaryButton onPress={() => nextGuessHandler("lower")}>
+            <Entypo name="minus" size={24} color="black" />
+          </PrimaryButton>
+          <TextComponent style={styles.guessNumberLandScape}>
+            {guessNumber}
+          </TextComponent>
+          <PrimaryButton onPress={() => nextGuessHandler("higher")}>
+            <Entypo name="plus" size={24} color="black" />
+          </PrimaryButton>
+        </View>
+      </>
+    );
+  }
+
+  return (
+    <View style={styles.rootScreen}>
+      <TextComponent>Opening Guess</TextComponent>
+      {content}
       <View style={styles.guessLogsContainer}>
         <FlatList
           data={guessRounds}
@@ -108,6 +140,7 @@ const styles = StyleSheet.create({
   rootScreen: {
     flex: 1,
     padding: 15,
+    alignItems: "center",
   },
   card: {
     height: 90,
@@ -118,8 +151,8 @@ const styles = StyleSheet.create({
   },
   buttonView: {
     flex: 1,
-    flexDirection: "row",
     alignItems: "center",
+    flexDirection: "row",
     justifyContent: "space-between",
     width: 200,
   },
@@ -133,6 +166,14 @@ const styles = StyleSheet.create({
     width: "80%",
     padding: 20,
     fontFamily: "OpenSansBold",
+  },
+  guessNumberLandScape: {
+    color: Colors.yellow,
+    borderColor: Colors.yellow,
+    width: "80%",
+    padding: 20,
+    fontFamily: "OpenSansBold",
+    marginHorizontal: 50,
   },
   guessLogsContainer: {
     flex: 1,

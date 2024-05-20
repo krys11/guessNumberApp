@@ -21,5 +21,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     fontFamily: "OpenSansRegular",
+    maxWidth: "80%",
+    width: 300,
   },
 });
